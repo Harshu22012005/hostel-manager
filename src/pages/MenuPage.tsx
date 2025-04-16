@@ -8,12 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { Utensils, Coffee, Clock } from 'lucide-react';
 
 const MenuPage = () => {
   const { isAuthenticated, role } = useAuth();
   const { menuItems } = useData();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     if (!isAuthenticated || role !== 'student') {
@@ -56,7 +58,7 @@ const MenuPage = () => {
       
       <Card className="mb-6 bg-blue-50 border-blue-200">
         <CardContent className="p-4 flex items-center">
-          <Clock className="h-5 w-5 text-hostel-blue mr-3" />
+          <Clock className="h-5 w-5 text-hostel-blue mr-3 flex-shrink-0" />
           <div>
             <p className="font-medium">Today's Menu ({formatDayName(today)})</p>
             <p className="text-sm text-gray-600 mt-1">
@@ -67,10 +69,10 @@ const MenuPage = () => {
       </Card>
       
       <Tabs defaultValue={today}>
-        <TabsList className="mb-4">
+        <TabsList className="mb-4 flex flex-wrap">
           {weekdays.map((day) => (
-            <TabsTrigger key={day} value={day}>
-              {formatDayName(day)}
+            <TabsTrigger key={day} value={day} className={isMobile ? "text-xs py-1 px-2" : ""}>
+              {isMobile ? day.substring(0, 3) : formatDayName(day)}
             </TabsTrigger>
           ))}
         </TabsList>

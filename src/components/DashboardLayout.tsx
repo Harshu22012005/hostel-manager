@@ -1,131 +1,137 @@
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Home, 
-  FileText, 
-  Calendar, 
-  MessageSquare, 
-  Clock, 
-  Users, 
-  Bell, 
-  Settings, 
-  Menu, 
-  X, 
-  LogOut 
-} from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { UserRole } from '@/types';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useState } from 'react';
+import { Menu, X, Home, FileText, Utensils, Calendar, MessageSquare, Clock, Bell, Users, Settings } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
-export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
-  const { logout, role } = useAuth();
-  const navigate = useNavigate();
+const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; setIsCollapsed: (value: boolean) => void }) => {
+  const { role, logout } = useAuth();
+  const location = useLocation();
+  const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
-
-  // Role-specific navigation items
-  const getNavItems = (role: UserRole) => {
-    if (role === 'student') {
-      return [
-        { icon: Home, label: 'Dashboard', path: '/dashboard' },
-        { icon: Clock, label: 'Outpass', path: '/outpass' },
-        { icon: FileText, label: 'Mess Menu', path: '/menu' },
-        { icon: Calendar, label: 'Schedule', path: '/schedule' },
-        { icon: MessageSquare, label: 'Complaints', path: '/complaints' },
-      ];
-    } else if (role === 'mess') {
-      return [
-        { icon: Home, label: 'Dashboard', path: '/dashboard' },
-        { icon: Users, label: 'Attendance', path: '/attendance' },
-        { icon: FileText, label: 'Menu Manager', path: '/menu-manager' },
-        { icon: Bell, label: 'Notifications', path: '/notifications' },
-      ];
-    } else {
-      return [
-        { icon: Home, label: 'Dashboard', path: '/dashboard' },
-        { icon: Clock, label: 'Outpass Requests', path: '/outpass-requests' },
-        { icon: Users, label: 'Students', path: '/students' },
-        { icon: MessageSquare, label: 'Complaints', path: '/complaints' },
-        { icon: Bell, label: 'Announcements', path: '/announcements' },
-      ];
-    }
-  };
-
-  const navItems = getNavItems(role || 'student');
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    toast({
+      title: "Logged out successfully",
+      description: "You have been logged out of your account",
+    });
   };
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const studentLinks = [
+    { href: '/dashboard', label: 'Dashboard', icon: Home },
+    { href: '/outpass', label: 'Outpass', icon: FileText },
+    { href: '/menu', label: 'Mess Menu', icon: Utensils },
+    { href: '/complaints', label: 'Complaints', icon: MessageSquare },
+  ];
+
+  const messLinks = [
+    { href: '/dashboard', label: 'Dashboard', icon: Home },
+    { href: '/menu-manager', label: 'Menu Manager', icon: Utensils },
+    { href: '/attendance', label: 'Attendance', icon: Clock },
+    { href: '/announcements', label: 'Announcements', icon: Bell },
+  ];
+
+  const officeLinks = [
+    { href: '/dashboard', label: 'Dashboard', icon: Home },
+    { href: '/outpass-requests', label: 'Outpass Requests', icon: FileText },
+    { href: '/students', label: 'Students', icon: Users },
+    { href: '/complaints', label: 'Complaints', icon: MessageSquare },
+    { href: '/announcements', label: 'Announcements', icon: Bell },
+  ];
+
+  const links = role === 'student' ? studentLinks : role === 'mess' ? messLinks : officeLinks;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Mobile menu button */}
-      <div className="lg:hidden fixed top-0 left-0 z-40 p-4">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={toggleSidebar}
-          className="bg-white"
+    <div className={cn(
+      "flex flex-col border-r h-screen bg-white transition-all duration-300 relative",
+      isCollapsed ? "w-16" : "w-64"
+    )}>
+      <div className="flex items-center justify-between p-4">
+        {!isCollapsed && (
+          <h2 className="text-xl font-bold text-hostel-blue">Hostel MS</h2>
+        )}
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="ml-auto"
+          onClick={() => setIsCollapsed(!isCollapsed)}
         >
-          {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          {isCollapsed ? <Menu size={20} /> : <X size={20} />}
         </Button>
       </div>
+      
+      <Separator />
+      
+      <nav className="flex-1 py-4 overflow-y-auto">
+        <ul className="space-y-1 px-2">
+          {links.map((link) => (
+            <li key={link.href}>
+              <Link 
+                to={link.href}
+                className={cn(
+                  "flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors",
+                  location.pathname === link.href && "bg-blue-50 text-hostel-blue font-medium",
+                  isCollapsed ? "justify-center" : "justify-start"
+                )}
+              >
+                <link.icon className={cn("h-5 w-5", location.pathname === link.href && "text-hostel-blue")} />
+                {!isCollapsed && <span className="ml-3">{link.label}</span>}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+      
+      <div className="p-4">
+        <Button 
+          variant="outline" 
+          className={cn("w-full", isCollapsed && "p-2")}
+          onClick={handleLogout}
+        >
+          {isCollapsed ? (
+            <Settings className="h-5 w-5" />
+          ) : (
+            "Logout"
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+};
 
-      {/* Sidebar */}
-      <div
-        className={`${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        } fixed inset-y-0 left-0 z-30 w-64 bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-0`}
-      >
-        <div className="h-full flex flex-col">
-          <div className="h-16 flex items-center justify-center border-b border-gray-200">
-            <h1 className="text-xl font-bold text-hostel-blue">Hostel Manager</h1>
-          </div>
-
-          <div className="flex-1 overflow-y-auto py-4">
-            <nav className="px-2 space-y-1">
-              {navItems.map((item, index) => (
-                <a
-                  key={index}
-                  href={item.path}
-                  className="group flex items-center px-4 py-3 text-sm font-medium rounded-md text-gray-700 hover:bg-hostel-lightGray hover:text-hostel-blue transition duration-150 ease-in-out"
-                >
-                  <item.icon className="h-5 w-5 mr-3 text-gray-500 group-hover:text-hostel-blue" />
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-
-          <div className="p-4 border-t border-gray-200">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Log Out
-            </Button>
-          </div>
+export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Auto-collapse the sidebar on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setIsCollapsed(true);
+    }
+  }, [isMobile]);
+  
+  return (
+    <div className="flex min-h-screen bg-gray-50">
+      <Navigation isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
+      
+      <main className={cn(
+        "flex-1 p-4 md:p-6 transition-all duration-300 overflow-x-hidden",
+        isCollapsed ? "ml-16" : "ml-0 md:ml-64"
+      )}>
+        <div className="max-w-6xl mx-auto">
+          {children}
         </div>
-      </div>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col min-h-screen">
-        <main className="flex-1 p-4 lg:p-8">{children}</main>
-      </div>
+      </main>
     </div>
   );
 };
