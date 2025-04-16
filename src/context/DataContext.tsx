@@ -1,14 +1,13 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { OutpassRequest, Complaint, MenuItem, Announcement, MealAttendance } from '../types';
 import { useToast } from '@/components/ui/use-toast';
 
-// Mock data
+// Mock data with Maharashtrian names
 const initialOutpassRequests: OutpassRequest[] = [
   {
     id: '1',
     studentId: '1',
-    studentName: 'John Doe',
+    studentName: 'Harshad Patil',
     roomNumber: 'A-101',
     reason: 'Family function',
     fromDate: '2025-04-20',
@@ -19,7 +18,7 @@ const initialOutpassRequests: OutpassRequest[] = [
   {
     id: '2',
     studentId: '3',
-    studentName: 'Alice Johnson',
+    studentName: 'Diya Kulkarni',
     roomNumber: 'B-205',
     reason: 'Medical appointment',
     fromDate: '2025-04-18',
@@ -30,7 +29,7 @@ const initialOutpassRequests: OutpassRequest[] = [
   {
     id: '3',
     studentId: '5',
-    studentName: 'Mike Smith',
+    studentName: 'Aditya Deshmukh',
     roomNumber: 'C-310',
     reason: 'Interview',
     fromDate: '2025-04-21',
@@ -38,13 +37,35 @@ const initialOutpassRequests: OutpassRequest[] = [
     status: 'rejected',
     createdAt: '2025-04-13T14:45:00Z',
   },
+  {
+    id: '4',
+    studentId: '7',
+    studentName: 'Pavan Joshi',
+    roomNumber: 'A-205',
+    reason: 'Family emergency',
+    fromDate: '2025-04-22',
+    toDate: '2025-04-24',
+    status: 'pending',
+    createdAt: '2025-04-16T09:15:00Z',
+  },
+  {
+    id: '5',
+    studentId: '9',
+    studentName: 'Akshay Wagh',
+    roomNumber: 'D-110',
+    reason: 'Sports competition',
+    fromDate: '2025-04-25',
+    toDate: '2025-04-28',
+    status: 'pending',
+    createdAt: '2025-04-16T11:45:00Z',
+  },
 ];
 
 const initialComplaints: Complaint[] = [
   {
     id: '1',
     studentId: '1',
-    studentName: 'John Doe',
+    studentName: 'Harshad Patil',
     roomNumber: 'A-101',
     category: 'maintenance',
     description: 'Leaking tap in bathroom',
@@ -54,7 +75,7 @@ const initialComplaints: Complaint[] = [
   {
     id: '2',
     studentId: '2',
-    studentName: 'Emma Wilson',
+    studentName: 'Mukesh Shinde',
     roomNumber: 'A-102',
     category: 'mess',
     description: 'Food quality has degraded in the last week',
@@ -64,12 +85,32 @@ const initialComplaints: Complaint[] = [
   {
     id: '3',
     studentId: '4',
-    studentName: 'Bob Brown',
+    studentName: 'Priya Gaikwad',
     roomNumber: 'B-210',
     category: 'other',
     description: 'Excessive noise from neighboring room',
     status: 'resolved',
     createdAt: '2025-04-10T16:30:00Z',
+  },
+  {
+    id: '4',
+    studentId: '6',
+    studentName: 'Tejas Jadhav',
+    roomNumber: 'B-215',
+    category: 'maintenance',
+    description: 'Broken window in the room',
+    status: 'pending',
+    createdAt: '2025-04-15T14:20:00Z',
+  },
+  {
+    id: '5',
+    studentId: '8',
+    studentName: 'Swati Bhosale',
+    roomNumber: 'C-120',
+    category: 'mess',
+    description: 'Need more vegetarian options in dinner',
+    status: 'in-progress',
+    createdAt: '2025-04-16T10:30:00Z',
   },
 ];
 
@@ -140,13 +181,27 @@ const initialAnnouncements: Announcement[] = [
     date: '2025-04-14',
     category: 'general',
   },
+  {
+    id: '4',
+    title: 'Ganesh Festival Celebration',
+    content: 'We will be celebrating Ganesh Festival in the hostel from September 10th. All students are invited to participate in the decoration and puja ceremonies.',
+    date: '2025-04-16',
+    category: 'event',
+  },
+  {
+    id: '5',
+    title: 'Academic Achievement Awards',
+    content: 'Congratulations to Harshad Patil, Diya Kulkarni, and Aditya Deshmukh for their outstanding academic performance. Awards ceremony on April 30th.',
+    date: '2025-04-17',
+    category: 'general',
+  },
 ];
 
 const initialMealAttendance: MealAttendance[] = [
   {
     id: '1',
     studentId: '1',
-    studentName: 'John Doe',
+    studentName: 'Harshad Patil',
     date: '2025-04-16',
     breakfast: true,
     lunch: true,
@@ -155,7 +210,7 @@ const initialMealAttendance: MealAttendance[] = [
   {
     id: '2',
     studentId: '2',
-    studentName: 'Emma Wilson',
+    studentName: 'Mukesh Shinde',
     date: '2025-04-16',
     breakfast: true,
     lunch: false,
@@ -164,9 +219,63 @@ const initialMealAttendance: MealAttendance[] = [
   {
     id: '3',
     studentId: '3',
-    studentName: 'Alice Johnson',
+    studentName: 'Diya Kulkarni',
     date: '2025-04-16',
     breakfast: false,
+    lunch: true,
+    dinner: true,
+  },
+  {
+    id: '4',
+    studentId: '4',
+    studentName: 'Priya Gaikwad',
+    date: '2025-04-16',
+    breakfast: true,
+    lunch: true,
+    dinner: true,
+  },
+  {
+    id: '5',
+    studentId: '5',
+    studentName: 'Aditya Deshmukh',
+    date: '2025-04-16',
+    breakfast: false,
+    lunch: false,
+    dinner: true,
+  },
+  {
+    id: '6',
+    studentId: '6',
+    studentName: 'Tejas Jadhav',
+    date: '2025-04-16',
+    breakfast: true,
+    lunch: true,
+    dinner: false,
+  },
+  {
+    id: '7',
+    studentId: '7',
+    studentName: 'Pavan Joshi',
+    date: '2025-04-16',
+    breakfast: true,
+    lunch: false,
+    dinner: false,
+  },
+  {
+    id: '8',
+    studentId: '8',
+    studentName: 'Swati Bhosale',
+    date: '2025-04-16',
+    breakfast: false,
+    lunch: true,
+    dinner: true,
+  },
+  {
+    id: '9',
+    studentId: '9',
+    studentName: 'Akshay Wagh',
+    date: '2025-04-16',
+    breakfast: true,
     lunch: true,
     dinner: true,
   },
@@ -197,7 +306,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [mealAttendance, setMealAttendance] = useState<MealAttendance[]>(initialMealAttendance);
   const { toast } = useToast();
 
-  // Load data from localStorage on initial render
   useEffect(() => {
     const storedOutpass = localStorage.getItem('hostelOutpassRequests');
     const storedComplaints = localStorage.getItem('hostelComplaints');
@@ -212,7 +320,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
     if (storedMealAttendance) setMealAttendance(JSON.parse(storedMealAttendance));
   }, []);
 
-  // Update localStorage when data changes
   useEffect(() => {
     localStorage.setItem('hostelOutpassRequests', JSON.stringify(outpassRequests));
   }, [outpassRequests]);
@@ -333,7 +440,6 @@ export const DataProvider = ({ children }: { children: ReactNode }) => {
         )
       );
     } else {
-      // Find student name from outpass requests (in a real app, we'd get this from a students table)
       const student = outpassRequests.find(request => request.studentId === studentId);
       const studentName = student?.studentName || 'Unknown Student';
       

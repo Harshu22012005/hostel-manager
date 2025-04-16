@@ -18,7 +18,16 @@ import AnnouncementsPage from "./pages/AnnouncementsPage";
 import StudentsPage from "./pages/StudentsPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+// Configure query client with default options
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -26,7 +35,7 @@ const App = () => (
       <DataProvider>
         <TooltipProvider>
           <Toaster />
-          <Sonner />
+          <Sonner position="top-right" closeButton richColors />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, X, Home, FileText, Utensils, Calendar, MessageSquare, Clock, Bell, Users, Settings } from 'lucide-react';
+import { Menu, X, Home, FileText, Utensils, Calendar, MessageSquare, Clock, Bell, Users, Settings, LogOut } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 interface DashboardLayoutProps {
@@ -53,7 +53,7 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
 
   return (
     <div className={cn(
-      "flex flex-col border-r h-screen bg-white transition-all duration-300 relative",
+      "flex flex-col border-r h-screen bg-white transition-all duration-300 relative animate-fade-in",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className="flex items-center justify-between p-4">
@@ -63,7 +63,7 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
         <Button 
           variant="ghost" 
           size="icon" 
-          className="ml-auto"
+          className={cn("ml-auto hover-scale", isCollapsed ? "mx-auto" : "")}
           onClick={() => setIsCollapsed(!isCollapsed)}
         >
           {isCollapsed ? <Menu size={20} /> : <X size={20} />}
@@ -74,14 +74,15 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
       
       <nav className="flex-1 py-4 overflow-y-auto">
         <ul className="space-y-1 px-2">
-          {links.map((link) => (
-            <li key={link.href}>
+          {links.map((link, index) => (
+            <li key={link.href} style={{ animationDelay: `${index * 0.05}s` }} className="animate-fade-in">
               <Link 
                 to={link.href}
                 className={cn(
                   "flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors",
                   location.pathname === link.href && "bg-blue-50 text-hostel-blue font-medium",
-                  isCollapsed ? "justify-center" : "justify-start"
+                  isCollapsed ? "justify-center" : "justify-start",
+                  "hover-scale"
                 )}
               >
                 <link.icon className={cn("h-5 w-5", location.pathname === link.href && "text-hostel-blue")} />
@@ -95,13 +96,16 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
       <div className="p-4">
         <Button 
           variant="outline" 
-          className={cn("w-full", isCollapsed && "p-2")}
+          className={cn("w-full hover-scale", isCollapsed && "p-2")}
           onClick={handleLogout}
         >
           {isCollapsed ? (
-            <Settings className="h-5 w-5" />
+            <LogOut className="h-5 w-5" />
           ) : (
-            "Logout"
+            <>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </>
           )}
         </Button>
       </div>
@@ -128,7 +132,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         "flex-1 p-4 md:p-6 transition-all duration-300 overflow-x-hidden",
         isCollapsed ? "ml-16" : "ml-0 md:ml-64"
       )}>
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto animate-fade-in">
           {children}
         </div>
       </main>
