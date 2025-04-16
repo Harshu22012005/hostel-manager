@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { UserRole } from '@/types';
@@ -48,6 +47,23 @@ const LoginForm = ({
       await login(email, password, selectedRole);
     } catch (error) {
       console.error('Login failed:', error);
+    }
+  };
+
+  const fillDemoCredentials = () => {
+    switch(selectedRole) {
+      case 'student':
+        setEmail('demo.student@hostel.com');
+        setPassword('student123');
+        break;
+      case 'mess':
+        setEmail('demo.mess@hostel.com');
+        setPassword('mess123');
+        break;
+      case 'office':
+        setEmail('demo.office@hostel.com');
+        setPassword('office123');
+        break;
     }
   };
   
@@ -104,9 +120,15 @@ const LoginForm = ({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password">Password</Label>
-              <a href="#" className="text-sm text-blue-500 hover:text-blue-700">
-                Forgot password?
-              </a>
+              <Button 
+                variant="link" 
+                size="sm" 
+                type="button"
+                onClick={fillDemoCredentials}
+                className="text-sm text-blue-500 hover:text-blue-700"
+              >
+                Use Demo Credentials
+              </Button>
             </div>
             <Input 
               id="password" 
@@ -176,7 +198,6 @@ const RegisterForm = () => {
         parentContact,
       });
       
-      // Reset form
       setName('');
       setEmail('');
       setPassword('');
@@ -185,7 +206,6 @@ const RegisterForm = () => {
       setRollNumber('');
       setParentContact('');
       
-      // Switch to login tab
       document.querySelector('[value="login"]')?.dispatchEvent(
         new MouseEvent('click', { bubbles: true })
       );

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { UserRole, User, Student, MessAuthority, HostelOffice } from '../types';
 import { useToast } from '@/components/ui/use-toast';
@@ -22,6 +21,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
+  // Add demo credentials
+  const DEMO_CREDENTIALS = {
+    student: {
+      email: 'demo.student@hostel.com',
+      password: 'student123',
+      role: 'student' as UserRole
+    },
+    mess: {
+      email: 'demo.mess@hostel.com', 
+      password: 'mess123',
+      role: 'mess' as UserRole
+    },
+    office: {
+      email: 'demo.office@hostel.com',
+      password: 'office123', 
+      role: 'office' as UserRole
+    }
+  };
+
   useEffect(() => {
     // Check for stored authentication in localStorage
     const storedUser = localStorage.getItem('hostelUser');
@@ -36,53 +54,59 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  // Simulated login function - in a real app, this would connect to a backend
+  // Update login function to include demo credential validation
   const login = async (email: string, password: string, userRole: UserRole) => {
     setIsLoading(true);
     
     try {
+      // Check if credentials match demo credentials
+      const matchingDemo = Object.values(DEMO_CREDENTIALS).find(
+        demo => 
+          demo.email === email && 
+          demo.password === password && 
+          demo.role === userRole
+      );
+
+      if (!matchingDemo) {
+        throw new Error('Invalid credentials');
+      }
+      
       // Simulate API request delay
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Simple email validation
-      if (!email.includes('@')) {
-        throw new Error('Invalid email format');
-      }
-      
-      // Simple password validation
-      if (password.length < 6) {
-        throw new Error('Password must be at least 6 characters');
-      }
 
-      // Mock users for demonstration
+      // Prepare user data based on role
       let userData: User | Student | MessAuthority | HostelOffice;
       
-      if (userRole === 'student') {
-        userData = {
-          id: '1',
-          name: 'John Doe',
-          email,
-          role: 'student',
-          roomNumber: 'A-101',
-          rollNumber: 'ST12345',
-          parentContact: '+1234567890',
-        };
-      } else if (userRole === 'mess') {
-        userData = {
-          id: '2',
-          name: 'Mess Manager',
-          email,
-          role: 'mess',
-          designation: 'Head Chef',
-        };
-      } else {
-        userData = {
-          id: '3',
-          name: 'Hostel Warden',
-          email,
-          role: 'office',
-          designation: 'Chief Warden',
-        };
+      switch(userRole) {
+        case 'student':
+          userData = {
+            id: '1',
+            name: 'John Doe',
+            email,
+            role: 'student',
+            roomNumber: 'A-101',
+            rollNumber: 'ST12345',
+            parentContact: '+1234567890',
+          };
+          break;
+        case 'mess':
+          userData = {
+            id: '2',
+            name: 'Mess Manager',
+            email,
+            role: 'mess',
+            designation: 'Head Chef',
+          };
+          break;
+        case 'office':
+          userData = {
+            id: '3',
+            name: 'Hostel Warden',
+            email,
+            role: 'office',
+            designation: 'Chief Warden',
+          };
+          break;
       }
       
       // Store authentication data
@@ -95,7 +119,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       toast({
         title: "Login successful",
-        description: `Welcome back, ${userData.name}!`,
+        description: `Welcome back, demo ${userRole} account!`,
       });
     } catch (error) {
       console.error('Login error:', error);
