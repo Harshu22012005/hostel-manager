@@ -19,8 +19,9 @@ const StudentDashboard = () => {
   const userOutpasses = outpassRequests.filter(request => request.studentId === studentId);
   const userComplaints = complaints.filter(complaint => complaint.studentId === studentId);
   
-  // Get today's menu
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'lowercase' }) as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  // Get today's menu - Using 'long' instead of 'lowercase'
+  const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+  const today = weekdays[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]; // Convert Sunday (0) to 6, and others to 0-5
   const todayMenu = menuItems.find(item => item.day === today);
   
   // Sort announcements by date (newest first)

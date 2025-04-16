@@ -22,7 +22,8 @@ const MenuPage = () => {
   }, [isAuthenticated, role, navigate]);
   
   const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'lowercase' }) as 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  // Fixed the date issue - using array index instead of toLocaleDateString
+  const today = weekdays[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1]; // Convert Sunday (0) to 6, and others to 0-5
   
   const formatDayName = (day: string) => {
     return day.charAt(0).toUpperCase() + day.slice(1);
