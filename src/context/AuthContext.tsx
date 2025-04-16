@@ -1,0 +1,177 @@
+
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { UserRole, User, Student, MessAuthority, HostelOffice } from '../types';
+import { useToast } from '@/components/ui/use-toast';
+
+interface AuthContextType {
+  user: User | Student | MessAuthority | HostelOffice | null;
+  role: UserRole | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  login: (email: string, password: string, role: UserRole) => Promise<void>;
+  logout: () => void;
+  register: (userData: Partial<Student>) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | Student | MessAuthority | HostelOffice | null>(null);
+  const [role, setRole] = useState<UserRole | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Check for stored authentication in localStorage
+    const storedUser = localStorage.getItem('hostelUser');
+    const storedRole = localStorage.getItem('hostelUserRole');
+    
+    if (storedUser && storedRole) {
+      setUser(JSON.parse(storedUser));
+      setRole(storedRole as UserRole);
+      setIsAuthenticated(true);
+    }
+    
+    setIsLoading(false);
+  }, []);
+
+  // Simulated login function - in a real app, this would connect to a backend
+  const login = async (email: string, password: string, userRole: UserRole) => {
+    setIsLoading(true);
+    
+    try {
+      // Simulate API request delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Simple email validation
+      if (!email.includes('@')) {
+        throw new Error('Invalid email format');
+      }
+      
+      // Simple password validation
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters');
+      }
+
+      // Mock users for demonstration
+      let userData: User | Student | MessAuthority | HostelOffice;
+      
+      if (userRole === 'student') {
+        userData = {
+          id: '1',
+          name: 'John Doe',
+          email,
+          role: 'student',
+          roomNumber: 'A-101',
+          rollNumber: 'ST12345',
+          parentContact: '+1234567890',
+        };
+      } else if (userRole === 'mess') {
+        userData = {
+          id: '2',
+          name: 'Mess Manager',
+          email,
+          role: 'mess',
+          designation: 'Head Chef',
+        };
+      } else {
+        userData = {
+          id: '3',
+          name: 'Hostel Warden',
+          email,
+          role: 'office',
+          designation: 'Chief Warden',
+        };
+      }
+      
+      // Store authentication data
+      localStorage.setItem('hostelUser', JSON.stringify(userData));
+      localStorage.setItem('hostelUserRole', userRole);
+      
+      setUser(userData);
+      setRole(userRole);
+      setIsAuthenticated(true);
+      
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${userData.name}!`,
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('hostelUser');
+    localStorage.removeItem('hostelUserRole');
+    setUser(null);
+    setRole(null);
+    setIsAuthenticated(false);
+    toast({
+      title: "Logged out",
+      description: "You have been logged out successfully",
+    });
+  };
+
+  const register = async (userData: Partial<Student>) => {
+    setIsLoading(true);
+    
+    try {
+      // Simulate API request delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Simple validation
+      if (!userData.email || !userData.name) {
+        throw new Error('Email and name are required');
+      }
+      
+      toast({
+        title: "Registration successful",
+        description: "Your account has been created. You can now log in.",
+      });
+    } catch (error) {
+      console.error('Registration error:', error);
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred",
+        variant: "destructive",
+      });
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        role,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+        register,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
