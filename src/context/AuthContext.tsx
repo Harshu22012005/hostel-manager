@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
 
-  // Add demo credentials
   const DEMO_CREDENTIALS = {
     student: {
       email: 'demo.student@hostel.com',
@@ -34,14 +33,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       role: 'mess' as UserRole
     },
     office: {
-      email: 'demo.office@hostel.com',
+      email: 'hosteloffice@mescoe.pune',
       password: 'office123', 
       role: 'office' as UserRole
     }
   };
 
   useEffect(() => {
-    // Check for stored authentication in localStorage
     const storedUser = localStorage.getItem('hostelUser');
     const storedRole = localStorage.getItem('hostelUserRole');
     
@@ -54,12 +52,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(false);
   }, []);
 
-  // Update login function to include demo credential validation
   const login = async (email: string, password: string, userRole: UserRole) => {
     setIsLoading(true);
     
     try {
-      // Check if credentials match demo credentials
       const matchingDemo = Object.values(DEMO_CREDENTIALS).find(
         demo => 
           demo.email === email && 
@@ -71,10 +67,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error('Invalid credentials');
       }
       
-      // Simulate API request delay
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // Prepare user data based on role
       let userData: User | Student | MessAuthority | HostelOffice;
       
       switch(userRole) {
@@ -105,11 +99,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             email,
             role: 'office',
             designation: 'Chief Warden',
+            contactNumber: '9067572205'
           };
           break;
       }
       
-      // Store authentication data
       localStorage.setItem('hostelUser', JSON.stringify(userData));
       localStorage.setItem('hostelUserRole', userRole);
       
@@ -150,10 +144,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     
     try {
-      // Simulate API request delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Simple validation
       if (!userData.email || !userData.name) {
         throw new Error('Email and name are required');
       }

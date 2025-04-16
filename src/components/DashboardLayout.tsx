@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu, X, Home, FileText, Utensils, Calendar, MessageSquare, Clock, Bell, Users, Settings, LogOut } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { MusicPlayer } from '@/components/MusicPlayer';
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -53,7 +55,7 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
 
   return (
     <div className={cn(
-      "flex flex-col border-r h-screen bg-white transition-all duration-300 relative animate-fade-in",
+      "flex flex-col border-r h-screen bg-sidebar text-sidebar-foreground transition-all duration-300 relative animate-fade-in",
       isCollapsed ? "w-16" : "w-64"
     )}>
       <div className="flex items-center justify-between p-4">
@@ -79,8 +81,8 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
               <Link 
                 to={link.href}
                 className={cn(
-                  "flex items-center p-2 rounded-md hover:bg-gray-100 transition-colors",
-                  location.pathname === link.href && "bg-blue-50 text-hostel-blue font-medium",
+                  "flex items-center p-2 rounded-md hover:bg-sidebar-accent transition-colors",
+                  location.pathname === link.href && "bg-sidebar-accent text-hostel-blue font-medium",
                   isCollapsed ? "justify-center" : "justify-start",
                   "hover-scale"
                 )}
@@ -93,7 +95,13 @@ const Navigation = ({ isCollapsed, setIsCollapsed }: { isCollapsed: boolean; set
         </ul>
       </nav>
       
-      <div className="p-4">
+      <div className="p-4 space-y-2">
+        {!isCollapsed && (
+          <div className="flex items-center justify-between mb-2">
+            <ThemeToggle />
+            <MusicPlayer />
+          </div>
+        )}
         <Button 
           variant="outline" 
           className={cn("w-full hover-scale", isCollapsed && "p-2")}
@@ -125,7 +133,7 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   }, [isMobile]);
   
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-background text-foreground">
       <Navigation isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       
       <main className={cn(

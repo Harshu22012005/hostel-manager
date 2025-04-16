@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { DataProvider } from "@/context/DataContext";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { MusicProvider } from "@/context/MusicContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import OutpassPage from "./pages/OutpassPage";
@@ -31,29 +33,33 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <DataProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner position="top-right" closeButton richColors />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/outpass" element={<OutpassPage />} />
-              <Route path="/outpass-requests" element={<OutpassRequests />} />
-              <Route path="/menu" element={<MenuPage />} />
-              <Route path="/menu-manager" element={<MenuManager />} />
-              <Route path="/complaints" element={<ComplaintsPage />} />
-              <Route path="/attendance" element={<AttendancePage />} />
-              <Route path="/announcements" element={<AnnouncementsPage />} />
-              <Route path="/students" element={<StudentsPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </DataProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <MusicProvider>
+        <AuthProvider>
+          <DataProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner position="top-right" closeButton richColors />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/outpass" element={<OutpassPage />} />
+                  <Route path="/outpass-requests" element={<OutpassRequests />} />
+                  <Route path="/menu" element={<MenuPage />} />
+                  <Route path="/menu-manager" element={<MenuManager />} />
+                  <Route path="/complaints" element={<ComplaintsPage />} />
+                  <Route path="/attendance" element={<AttendancePage />} />
+                  <Route path="/announcements" element={<AnnouncementsPage />} />
+                  <Route path="/students" element={<StudentsPage />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </DataProvider>
+        </AuthProvider>
+      </MusicProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
