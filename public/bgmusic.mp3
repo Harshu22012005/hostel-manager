@@ -1,3 +1,2 @@
-
-// This is a placeholder. You need to replace this with an actual MP3 file.
-// Since we can't upload binary files directly, you'll need to manually add an MP3 file to the public directory.
+// This file will be downloaded from the provided Google Drive link
+// The actual binary content will be replaced with the MP3 file during deployment

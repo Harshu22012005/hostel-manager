@@ -81,7 +81,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             roomNumber: 'A-101',
             rollNumber: 'ST12345',
             parentContact: '+1234567890',
-          };
+          } as Student;
           break;
         case 'mess':
           userData = {
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             email,
             role: 'mess',
             designation: 'Head Chef',
-          };
+          } as MessAuthority;
           break;
         case 'office':
           userData = {
@@ -100,8 +100,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             role: 'office',
             designation: 'Chief Warden',
             contactNumber: '9067572205'
-          };
+          } as HostelOffice;
           break;
+        default:
+          throw new Error('Invalid role');
       }
       
       localStorage.setItem('hostelUser', JSON.stringify(userData));
