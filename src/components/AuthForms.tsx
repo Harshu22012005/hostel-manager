@@ -61,7 +61,7 @@ const LoginForm = ({
         setPassword('mess123');
         break;
       case 'office':
-        setEmail('demo.office@hostel.com');
+        setEmail('hosteloffice@mescoe.pune');
         setPassword('office123');
         break;
     }

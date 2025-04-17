@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       role: 'mess' as UserRole
     },
     office: {
-      email: 'hosteloffice@mescoe.pune',
+      email: 'hosteloffice@mescoe.pune', 
       password: 'office123', 
       role: 'office' as UserRole
     }
